@@ -5,26 +5,33 @@ import { get, post, httpDelete } from "../api/node-backend/http";
 const ListBooksView = () => {
   const [authors, setAuthors] = useState([])
   const [books, setBooks] = useState([])
+  const [doRequest, setDoRequest] = useState(true);
 
   useEffect(() => {
+    console.log("leyendo usuarios")
     get("users").then((data) => {
       setAuthors(data.authors);
     });
-    console.log("leyendo usuarios")
   }, []);
 
 
   useEffect(() => {
-    get("books").then((data) => {
-      setBooks(data.books);
-    });
-    console.log("leyendo libros")
-  }, [setBooks]);
+    if (doRequest) {
+      console.log("leyendo libros");
+      setTimeout(() => {
+        get("books").then((data) => {
+          setBooks(data.books);
+        });
+      }, 10);
+      setDoRequest(false);
+    }
+  }, [doRequest]);
 
   const handleClick = (id) => {
-    if (window.confirm('Delete the item?')) {
-      console.log("Eliminar libro con id:", id)
-      httpDelete(`books/${id}`, {})
+    if (window.confirm('Está seguro que desea eliminar este libro?')) {
+      console.log("Eliminar libro con id:", id);
+      httpDelete(`books/${id}`, {});
+      setDoRequest(true);
     }
   }
   const rows = books.map((book) => {
@@ -51,7 +58,7 @@ const ListBooksView = () => {
 
     }
     post("books", book);
-    setBooks(books);
+    setDoRequest(true);
   }
 
   return (
