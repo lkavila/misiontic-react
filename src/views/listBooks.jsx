@@ -1,26 +1,65 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../components/Table";
+import { get, post, httpDelete } from "../api/node-misiontic/http"
 
 const ListBooksView = () => {
   const [books, setBooks] = useState([])
+  const [authors, setAuthors] = useState([])
+  const [doRequest, setDoRequest] = useState(true)
 
+  useEffect(() => {
+    console.log("leyendo users");
+    get("users").then((data) => {
+      setAuthors(data.authors);
+    })
+  }, []);
+
+
+  useEffect(() => {
+    if (doRequest) {
+      setTimeout(() => {
+        console.log("leyendo libros");
+        get("books").then((data) => {
+          setBooks(data.books);
+          setDoRequest(false)
+        });
+      }, 20)
+
+    }
+  }, [doRequest]);
+
+  const handleDelete = (id) => {
+    if (window.confirm("¿Seguro que desea eliminar este libro?")) {
+      console.log("Delete book with id:", id)
+      httpDelete(`books/${id}`);
+      setDoRequest(true);
+    }
+  }
   const rows = books.map((book) => {
     return (
       <tr key={book._id}>
         <td>{book.name}</td>
         <td>{book.published_date}</td>
         <td>{book.author.name}</td>
+        <td><button type="button" className="btn btn-danger" onClick={() => handleDelete(book._id)} >Eliminar</button></td>
       </tr>
     );
   });
 
-  const columns = ["book name", "publication date", "author"];
+  const columns = ["Book name", "Publication date", "Author"];
   const columnsTable = columns.map((column) => <th scope="col" key={column}>{column}</th>);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    //const data = new FormData(event.target);
+    const data = new FormData(event.target);
     // data.get reference by form input's `name` tag
+    const book = {
+      name: data.get("bookName"),
+      published_date: data.get("date"),
+      author: data.get("author")
+    }
+    post("books", book);
+    setDoRequest(true);
   }
 
   return (
@@ -41,8 +80,7 @@ const ListBooksView = () => {
         <div className="mb-1">
           <label className="form-label" htmlFor="author">Selecciona el autor</label>
           <select className="form-select" id="author" name="author">
-            <option value="1">One</option>
-
+            {authors.map((author) => <option key={author._id} value={author._id}>{author.name}</option>)}
           </select>
         </div>
         <br />
