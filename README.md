@@ -2,7 +2,7 @@
 create a .env file with this values:
 * REACT_APP_POKE_API_HOST=pokeapi.co
 * REACT_APP_POKE_API_VERSION=2
-* REACT_APP_URL_API=
+* REACT_APP_URL_API= (https://node-misiontic.herokuapp.com/api/v1) se puede usar ese endpoint, es la app de node desplegada en heroku
 
 # Getting Started with Create React App
 
