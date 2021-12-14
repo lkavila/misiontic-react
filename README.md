@@ -1,3 +1,9 @@
+# ENV
+create a .env file with this values:
+* REACT_APP_POKE_API_HOST=pokeapi.co
+* REACT_APP_POKE_API_VERSION=2
+* REACT_APP_URL_API=
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
