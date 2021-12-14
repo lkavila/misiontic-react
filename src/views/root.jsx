@@ -20,7 +20,7 @@ const RootView = () => {
                         <Link to="/pokemons" >Ver pokemons</Link>
                     </li>
                     <li key="list-books">
-                        <Link to="list-books" >Ver lista de usuarios</Link>
+                        <Link to="list-books" >Ver lista de libros</Link>
                     </li>
                 </ul>
 

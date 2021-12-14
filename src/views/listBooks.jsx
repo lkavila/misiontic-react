@@ -1,61 +1,62 @@
 import React, { useState, useEffect } from "react";
 import Table from "../components/Table";
-import { get, post, httpDelete } from "../api/node-backend/http";
+import { get, post, httpDelete } from "../api/node-misiontic/http"
 
 const ListBooksView = () => {
-  const [authors, setAuthors] = useState([])
   const [books, setBooks] = useState([])
-  const [doRequest, setDoRequest] = useState(true);
+  const [authors, setAuthors] = useState([])
+  const [doRequest, setDoRequest] = useState(true)
 
   useEffect(() => {
-    console.log("leyendo usuarios")
+    console.log("leyendo users");
     get("users").then((data) => {
       setAuthors(data.authors);
-    });
+    })
   }, []);
 
 
   useEffect(() => {
     if (doRequest) {
-      console.log("leyendo libros");
       setTimeout(() => {
+        console.log("leyendo libros");
         get("books").then((data) => {
           setBooks(data.books);
+          setDoRequest(false)
         });
-      }, 10);
-      setDoRequest(false);
+      }, 20)
+
     }
   }, [doRequest]);
 
-  const handleClick = (id) => {
-    if (window.confirm('Está seguro que desea eliminar este libro?')) {
-      console.log("Eliminar libro con id:", id);
-      httpDelete(`books/${id}`, {});
+  const handleDelete = (id) => {
+    if (window.confirm("¿Seguro que desea eliminar este libro?")) {
+      console.log("Delete book with id:", id)
+      httpDelete(`books/${id}`);
       setDoRequest(true);
     }
   }
   const rows = books.map((book) => {
-    return (<tr key={book._id}>
-      <td>{book.name}</td>
-      <td>{book.published_date}</td>
-      <td>{book.author.name}</td>
-      <td><button type="button" className="btn btn-danger" onClick={() => handleClick(book._id)} >Eliminar</button></td>
-    </tr>
+    return (
+      <tr key={book._id}>
+        <td>{book.name}</td>
+        <td>{book.published_date}</td>
+        <td>{book.author.name}</td>
+        <td><button type="button" className="btn btn-danger" onClick={() => handleDelete(book._id)} >Eliminar</button></td>
+      </tr>
     );
   });
 
-  const columns = ["book name", "published date", "author", "actions"];
+  const columns = ["Book name", "Publication date", "Author"];
   const columnsTable = columns.map((column) => <th scope="col" key={column}>{column}</th>);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.target);
-    // reference by form input's `name` tag
+    // data.get reference by form input's `name` tag
     const book = {
       name: data.get("bookName"),
       published_date: data.get("date"),
-      author: data.get("author"),
-
+      author: data.get("author")
     }
     post("books", book);
     setDoRequest(true);
