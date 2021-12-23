@@ -42,3 +42,18 @@ export const httpDelete = async (endpoint, data) => {
     return console.log(error);
   }
 }
+
+export const put = async (endpoint, data) => {
+  try {
+    const response = await fetch(`${apiUrl}/${endpoint}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "PUT",
+      body: JSON.stringify(data)
+    });
+    return response.json()
+  } catch (error) {
+    return console.log(error);
+  }
+}
